@@ -1,0 +1,97 @@
+questions:
+- variable: postgresql.persistence.enabled
+  default: "false"
+  description: "Enable persistent volume for Postgresql"
+  type: boolean
+  required: true
+  label: Postgresql Persistent Volume Enabled
+  group: "Database Settings"
+  subquestions:
+  - variable: postgresql.persistence.size
+    default: "8Gi"
+    description: "Postgresql Persistent Volume Size"
+    type: string
+    label: Postgresql Volume Size
+  - variable: postgresql.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Postgresql
+  - variable: postgresql.persistence.existingClaim
+    default: ""
+    description: "If not empty, uses the specified existing PVC instead of creating new one"
+    type: string
+    label: Existing Persistent Volume Claim for Postgresql
+- variable: redis.master.persistence.enabled
+  default: "false"
+  description: "Enable persistent volume for Redis"
+  type: boolean
+  required: true
+  label: Redis Persistent Volume Enabled
+  group: "Database Settings"
+  subquestions:
+  - variable: redis.master.persistence.size
+    default: "8Gi"
+    description: "Redis Persistent Volume Size"
+    type: string
+    label: Redis Volume Size
+  - variable: redis.master.persistence.storageClass
+    default: ""
+    description: "If undefined or null, uses the default StorageClass. Default to null"
+    type: storageclass
+    label: Default StorageClass for Redis
+
+- variable: mosquitto.service.type
+  default: "ClusterIP"
+  description: "Mosquitto Service type"
+  type: enum
+  options:
+    - "ClusterIP"
+    - "NodePort"
+    - "LoadBalancer"
+  required: true
+  label:  Service Type
+  show_subquestion_if: "NodePort"
+  group: "Services and Load Balancing"
+
+- variable:  applicationserver.service.type
+  default: "ClusterIP"
+  description: "applicationserver Service type"
+  type: enum
+  options:
+    - "ClusterIP"
+    - "NodePort"
+    - "LoadBalancer"
+  required: true
+  label: Mosquito Service Type
+  show_subquestion_if: "NodePort"
+  group: "Services and Load Balancing"
+
+- variable:  gatewaybridge.service.type
+  default: "ClusterIP"
+  description: "gatewaybridge Service type"
+  type: enum
+  options:
+    - "ClusterIP"
+    - "NodePort"
+    - "LoadBalancer"
+  required: true
+  label: Mosquito Service Type
+  show_subquestion_if: "NodePort"
+  group: "Services and Load Balancing"
+
+
+- variable: ingress.enabled
+  default: "true"
+  description: "Expose app using Layer 7 Load Balancer - ingress"
+  type: boolean
+  label: Expose app using Layer 7 Load Balancer
+  show_subquestion_if: true
+  group: "Services and Load Balancing"
+  subquestions:
+  - variable: ingress.hosts[0].name
+    default: "xip.io"
+    description: "Hostname to your  installation"
+    type: hostname
+    required: true
+    label: Hostname

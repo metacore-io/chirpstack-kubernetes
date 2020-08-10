@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "chirpstack.fullname" . }}-networkserver-configmap
+data:
+     POSTGRESQL__DSN: "postgres://chirpstack_ns:chirpstack_ns@{{ include "chirpstack.fullname" . }}-postgresql/chirpstack_ns?sslmode=disable"
+     REDIS__URL: redis://{{ include "chirpstack.fullname" . }}-redis-master:6379
+     NETWORK_SERVER__BAND__NAME: EU868
+     NETWORK_SERVER__GATEWAY__BACKEND__MQTT__SERVER: tcp://{{ include "chirpstack.fullname" . }}-mosquitto:1883
+     JOIN_SERVER__DEFAULT__SERVER: http://{{ include "chirpstack.fullname" . }}-applicationserver:8003
+     GEOLOCATION_SERVER__SERVER: {{ include "chirpstack.fullname" . }}-geolocationserver:8005

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ include "chirpstack.fullname" . }}-applicationserver
+data:
+     POSTGRESQL__DSN: "postgres://chirpstack_as:chirpstack_as@{{ include "chirpstack.fullname" . }}-postgresql/chirpstack_as?sslmode=disable"
+     REDIS__URL: redis://{{ include "chirpstack.fullname" . }}-redis-master:6379
+     APPLICATION_SERVER__INTEGRATION__MQTT__SERVER: tcp://{{ include "chirpstack.fullname" . }}-mosquitto:{{ .Values.mosquitto.service.port }}
+     APPLICATION_SERVER__API__PUBLIC_HOST: {{ include "chirpstack.fullname" . }}-applicationserver:8001
+     APPLICATION_SERVER__EXTERNAL_API__JWT_SECRET: verysecret
+
+

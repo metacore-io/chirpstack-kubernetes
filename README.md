@@ -16,7 +16,6 @@ but keep in mind that for production usage it might need modifications.
 ## Directory layout
 
 * `values.yml`: the docker-compose file containing the services
-* `docker-compose-env.yml`: alternate docker-compose file using environment variables, can be run with the docker-compose `-f` flag
 * `templates/chirpstack*`: directory containing the ChirpStack configuration file variables, see:
     * https://www.chirpstack.io/gateway-bridge/install/config/
     * https://www.chirpstack.io/network-server/install/config/

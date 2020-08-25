@@ -5,7 +5,7 @@
 also have rancher chart version, please check
 https://github.com/metacore-io/metacore-charts
 
-# ChirpStack Docker example
+# ChirpStack Helm Chart Kubernetes
 
 This repository contains a skeleton to setup the [ChirpStack](https://www.chirpstack.io)
 open-source LoRaWAN Network Server stack using [Docker Compose](https://docs.docker.com/compose/).

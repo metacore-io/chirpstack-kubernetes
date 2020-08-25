@@ -1,8 +1,10 @@
+# Metacore.io Chirpstack Chart 
+
 # Default values for chirpstack.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 #
-#
+
 
 networkserver:
   image:

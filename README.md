@@ -31,7 +31,7 @@ You can change default values by defining configmap variables in `values.yaml`.
 
 # Data persistence
 
-PostgreSQL and Redis data is persisted in Docker volumes, see the `values.yml`
+PostgreSQL and Redis data can be persisted on PVC volumes, see the `values.yml`
 `volumes` definition.
 
 

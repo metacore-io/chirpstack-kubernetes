@@ -4,7 +4,7 @@ metadata:
   name: {{ include "chirpstack.fullname" . }}-networkserver
   labels:
     {{- include "chirpstack.labels" . | nindent 4 }}
-    app: networkserver
+    app.kubernetes.io/instance:  "networkserver" 
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -12,14 +12,14 @@ spec:
   selector:
     matchLabels:
       {{- include "chirpstack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/instance: "networkserver"
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-networkserver.yaml") . | sha256sum }}
       labels:
         {{- include "chirpstack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/instance: "networkserver"
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -41,6 +41,21 @@ spec:
           - name: config-volume
             mountPath: /etc/chirpstack-network-server/network-server.toml
             subPath: network-server.toml
+          ports:
+            - name: networkserver
+              containerPort: {{ .Values.networkserver.service.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: metrics
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: metrics
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:

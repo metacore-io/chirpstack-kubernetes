@@ -5,8 +5,13 @@ metadata:
 data:
      POSTGRESQL__DSN: "postgres://chirpstack_as:chirpstack_as@{{ include "chirpstack.fullname" . }}-postgresql/chirpstack_as?sslmode=disable"
      REDIS__URL: redis://{{ include "chirpstack.fullname" . }}-redis-master:6379
+     {{- if  .Values.mosquitto.external }}
+     APPLICATION_SERVER__INTEGRATION__MQTT__SERVER: {{ .Values.mosquitto.external_address }}
+     {{ else }}
      APPLICATION_SERVER__INTEGRATION__MQTT__SERVER: tcp://{{ include "chirpstack.fullname" . }}-mosquitto:{{ .Values.mosquitto.service.port }}
+     {{- end }}
      APPLICATION_SERVER__API__PUBLIC_HOST: {{ include "chirpstack.fullname" . }}-applicationserver:8001
      APPLICATION_SERVER__EXTERNAL_API__JWT_SECRET: verysecret
+     METRICS__PROMETHEUS__ENDPOINT_ENABLED: "true"
 
 

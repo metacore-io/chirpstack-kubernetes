@@ -3,4 +3,9 @@ kind: ConfigMap
 metadata:
     name: {{ include "chirpstack.fullname" . }}-gatewaybridge
 data:
-   INTEGRATION__MQTT__AUTH__GENERIC__SERVERS: tcp://{{ include "chirpstack.fullname" . }}-mosquitto:1883
+   {{- if  .Values.mosquitto.external }}
+   INTEGRATION__MQTT__AUTH__GENERIC__SERVERS: {{ .Values.mosquitto.external_address }}
+   {{ else }}
+   INTEGRATION__MQTT__AUTH__GENERIC__SERVERS: tcp://{{ include "chirpstack.fullname" . }}-mosquitto:{{ .Values.mosquitto.service.port }}
+   {{- end }}
+   METRICS__PROMETHEUS__ENDPOINT_ENABLED: "true"

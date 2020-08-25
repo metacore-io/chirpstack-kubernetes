@@ -4,12 +4,14 @@ metadata:
   name: {{ include "chirpstack.fullname" . }}-mosquitto
   labels:
     {{- include "chirpstack.labels" . | nindent 4 }}
+    app.kubernetes.io/instance: "mosquitto"
 spec:
   type: {{ .Values.mosquitto.service.type }}
   ports:
     - port: {{ .Values.mosquitto.service.port }}
-      targetPort: http
+      targetPort: mosquitto
       protocol: TCP
       name: http
   selector:
     {{- include "chirpstack.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/instance: mosquitto

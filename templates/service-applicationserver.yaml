@@ -4,6 +4,7 @@ metadata:
   name: {{ include "chirpstack.fullname" . }}-applicationserver
   labels:
     {{- include "chirpstack.labels" . | nindent 4 }}
+    app.kubernetes.io/instance: "applicationserver"
 spec:
   type: {{ .Values.applicationserver.service.type }}
   ports:
@@ -11,5 +12,14 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+    - name: grpc
+      port: 8001
+      protocol: TCP
+      targetPort: 8001
+    - name: grpc2
+      port: 8003
+      protocol: TCP
+      targetPort: 8003
   selector:
     {{- include "chirpstack.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/instance: "applicationserver"

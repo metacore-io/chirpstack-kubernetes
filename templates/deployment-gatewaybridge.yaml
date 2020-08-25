@@ -4,6 +4,7 @@ metadata:
   name: {{ include "chirpstack.fullname" . }}-gatewaybridge
   labels:
     {{- include "chirpstack.labels" . | nindent 4 }}
+    app.kubernetes.io/instance: "gatewaybridge"
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -11,14 +12,14 @@ spec:
   selector:
     matchLabels:
       {{- include "chirpstack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/instance: "gatewaybridge"
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-gatewaybridge.yaml") . | sha256sum }}
       labels:
         {{- include "chirpstack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/instance: "gatewaybridge"
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -41,9 +42,20 @@ spec:
             mountPath: /etc/chirpstack-gateway-bridge/gateway-bridge.toml
             subPath: gateway-bridge.toml
           ports:
-            - name: http
-              containerPort: 1700
+            - name: gatewaybridge
+              containerPort: {{ .Values.gatewaybridge.service.port }}
               protocol: UDP
+            - name: metrics
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: metrics
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: metrics
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:

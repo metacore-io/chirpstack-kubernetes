@@ -12,14 +12,14 @@ spec:
   selector:
     matchLabels:
       {{- include "chirpstack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/instance:  "mosquitto" 
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-mosquitto.yaml") . | sha256sum }}
       labels:
         {{- include "chirpstack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/instance: "mosquitto" 
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -42,15 +42,15 @@ spec:
             mountPath: /etc/chirpstack-network-server/network-server.toml
             subPath: network-server.toml
           ports:
-            - name: http
-              containerPort: 1883
+            - name: mosquitto
+              containerPort: {{ .Values.mosquitto.service.port }}
               protocol: TCP
           livenessProbe:
             tcpSocket:
-              port: 1883
+              port: {{ .Values.mosquitto.service.port }}
           readinessProbe:
             tcpSocket:
-              port: 1883
+              port: {{ .Values.mosquitto.service.port }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:

@@ -4,7 +4,7 @@ metadata:
   name: {{ include "chirpstack.fullname" . }}-applicationserver
   labels:
     {{- include "chirpstack.labels" . | nindent 4 }}
-    app: applicationserver
+    app.kubernetes.io/instance: "applicationserver"
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -12,14 +12,14 @@ spec:
   selector:
     matchLabels:
       {{- include "chirpstack.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/instance: "applicationserver"
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-networkserver.yaml") . | sha256sum }}
       labels:
         {{- include "chirpstack.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/instance: "applicationserver"
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -43,16 +43,25 @@ spec:
             subPath: network-server.toml
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ .Values.applicationserver.service.port }}
+              protocol: TCP
+            - name: grpc
+              containerPort: 8001
+              protocol: TCP
+            - name: grpc2
+              containerPort: 8003
+              protocol: TCP
+            - name: metrics
+              containerPort: 80
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /health
+              port: metrics
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: /health
+              port: metrics
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       volumes:

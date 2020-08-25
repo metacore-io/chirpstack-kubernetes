@@ -48,7 +48,6 @@ Selector labels
 */}}
 {{- define "chirpstack.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "chirpstack.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
